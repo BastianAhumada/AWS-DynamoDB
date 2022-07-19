@@ -1,0 +1,15 @@
+{
+  "name": "aws-dynamo-serverless",
+  "version": "1.0.0",
+  "description": "Crud-DynamoDB-with-serverless",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy-sls":"serverless deploy"
+  },
+  "author": "Bastian Ahumada",
+  "license": "ISC",
+  "dependencies": {
+    "yarn": "^1.22.19"
+  }
+}
