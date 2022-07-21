@@ -5,11 +5,14 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "deploy-sls":"serverless deploy"
+    "deploy": "serverless deploy"
   },
   "author": "Bastian Ahumada",
   "license": "ISC",
   "dependencies": {
     "yarn": "^1.22.19"
+  },
+  "devDependencies": {
+    "aws-sdk": "^2.1179.0"
   }
 }
