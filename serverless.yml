@@ -11,7 +11,7 @@
 #
 # Happy Coding!
 
-service: aws-dynamo-serverless
+service: SV32F3
 # app and org for use with dashboard.serverless.com
 #app: your-app-name
 #org: your-org-name
@@ -23,7 +23,29 @@ frameworkVersion: '3'
 provider:
   name: aws
   runtime: nodejs12.x
-  stage: dev
+  stage: ${opt:stage, 'dev'}
+  region: us-east-1
+  stackName: SV32F3
+  environment:
+    DYNAMODBNAME: dev-SV32F3
+
+resources:
+  Resources: 
+    CustomerTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: pk
+            AttributeType: S
+          - AttributeName: sk
+            AttributeType: S
+        BillingMode: PAY_PER_REQUEST
+        KeySchema:
+          - AttributeName: pk
+            KeyType: HASH
+          - AttributeName: sk
+            KeyType: RANGE
+        TableName: ${sls:stage}-${self:service}
 # you can overwrite defaults here
 #  stage: dev
 #  region: us-east-1
@@ -61,7 +83,10 @@ provider:
 functions:
   hello:
     handler: handler.hello
-    name: ${sls:stage}-FN73H2
+    name: ${sls:stage}-FN73H6
+    tracing: true
+    memorySize: 256
+    timeout: 10
     events: 
       - httpApi: 
           path: /user/create
