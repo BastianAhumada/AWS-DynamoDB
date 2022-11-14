@@ -1,7 +1,7 @@
 'use strict';
 
-const hello = require('./functions/hello')
+import hello from './functions/hello';
 
-module.exports = {
+export {
   hello
 }

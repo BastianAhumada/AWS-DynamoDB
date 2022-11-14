@@ -1,4 +1,15 @@
-module.exports = (event, _, callback) => {
+import { User } from '../../utils/resources'
+
+export default (event) => {
+  const CreateUser =  User.UserCreate({
+    Data: {
+      firstName: 'Bastian',
+      lastName: "Ahumada",
+      body: {
+        addres: "Villa Los Floristas"
+      }
+    }
+  })
 
   if (!event.headers.authorization) {
     callback(null, {
@@ -18,8 +29,6 @@ module.exports = (event, _, callback) => {
     })
   }
 
-  console.log('Body', event.body)
-
   const {firstName, lastName, Mascota, nameMascota } = JSON.parse(event.body)
   
   if (event.body) {
@@ -30,4 +39,6 @@ module.exports = (event, _, callback) => {
       }
     })
   }
+
+
 }
