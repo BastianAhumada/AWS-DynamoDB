@@ -21,15 +21,15 @@ service: SV32F3
 frameworkVersion: '3'
 
 	
-plugins:
-  - serverless-webpack
+# plugins:
+#   - serverless-webpack
 
 custom:
-  webpack:
-    webpackConfig: 'webpack.config.js' # Name of webpack configuration file
-    includeModules: false # Node modules configuration for packaging
-    packager: 'npm' # Packager that will be used to package your external modules
-    excludeFiles: src/**/*.test.js # Provide a glob for files to ignore
+  # webpack:
+  #   webpackConfig: 'webpack.config.js' # Name of webpack configuration file
+  #   includeModules: false # Node modules configuration for packaging
+  #   packager: 'npm' # Packager that will be used to package your external modules
+  #   excludeFiles: src/**/*.test.js # Provide a glob for files to ignore
 
 provider:
   name: aws
@@ -39,6 +39,7 @@ provider:
   stackName: SV32F3
   environment:
     DYNAMODBNAME: dev-SV32F3
+    ACCOUNTID: ${file(./${opt:stage, 'dev'}.env.json):ACCOUNTID}
 
 resources:
   Resources: 
@@ -57,39 +58,36 @@ resources:
           - AttributeName: sk
             KeyType: RANGE
         TableName: ${sls:stage}-${self:service}
-# you can overwrite defaults here
-#  stage: dev
-#  region: us-east-1
 
-# you can add statements to the Lambda function's IAM Role here
-#  iam:
-#    role:
-#      statements:
-#        - Effect: "Allow"
-#          Action:
-#            - "s3:ListBucket"
-#          Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
-#        - Effect: "Allow"
-#          Action:
-#            - "s3:PutObject"
-#          Resource:
-#            Fn::Join:
-#              - ""
-#              - - "arn:aws:s3:::"
-#                - "Ref" : "ServerlessDeploymentBucket"
-#                - "/*"
+    CustomerEventBus:
+      Type: AWS::Events::EventBus
+      Properties: 
+        Name: ${self:service}
+  
+    CustomerEventBusPolicy: 
+      Type: AWS::Events::EventBusPolicy
+      Properties: 
+          StatementId: "MyStatement"
+          Statement: 
+              Effect: "Allow"
+              Principal: 
+                  AWS: "arn:aws:iam::946633085140:root"
+              Action: "events:PutEvents"
+              Resource: "arn:aws:events:us-east-1:946633085140:event-bus/default"
 
-# you can define service wide environment variables here
-#  environment:
-#    variable1: value1
+    DefaultEventRule:
+      Type: AWS::Events::Rule
+      Properties: 
+        EventPattern: 
+          source:
+            - service.vet.com
+          detail-type:
+            - user_create
+        Targets: 
+          - Arn: 'arn:aws:lambda:us-east-1:946633085140:function:dev-FN73H9'
+            Id: '${self:service}-RL24F5'
 
-# you can add packaging information here
-#package:
-#  patterns:
-#    - '!exclude-me.js'
-#    - '!exclude-me-dir/**'
-#    - include-me.js
-#    - include-me-dir/**
+
 
 functions:
   hello:
@@ -102,7 +100,22 @@ functions:
       - httpApi: 
           path: /customer/create
           method: post
-#    The following are a few example events you can configure
+
+  bye:
+    handler: handler.hello
+    name: ${sls:stage}-FN73H9
+    tracing: true
+    memorySize: 256
+    timeout: 10
+    events:
+      - cloudwatchEvent:
+          event:
+            source:
+              - "service.vet.com"
+            detail-type:
+              - "user_create"
+
+
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details
 #    events:

@@ -1,4 +1,4 @@
-import { DynamoDB } from "../../../aws"
+import { DynamoDB } from '../../../aws'
 
 export default async(params) => {
     console.log('Hola Create User', DynamoDB)
