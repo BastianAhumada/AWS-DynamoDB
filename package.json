@@ -1,6 +1,6 @@
 {
   "name": "aws-dynamo-serverless",
-  "version": "1.0.0",
+  "version": "0.0.2",
   "description": "Crud-DynamoDB-with-serverless",
   "main": "index.js",
   "type": "commonjs",
