@@ -2,7 +2,7 @@
 
 export default (event, context) => {
 
-  const { hourFirstSelected, hourFinishSelected, doctorSelected } = event.input
+  const { hourFirstSelected, hourFinishSelected, doctorSelected, filterDay } = event.input
 
 
   const CreateHoursForHours = []
@@ -10,48 +10,83 @@ export default (event, context) => {
 
   let nameDoctor = 'Bastian Ahumada'
   let specialty = 'Veterinarian'
-  let dayOfWork = [['lunes', 3], ['martes', 5], ['miercoles', 4], ['jueves', 4], ['viernes', 2], ['sabado', 2]]
-  let hoursForDays = [3, 5, 6, 8, 9, 3] // Not Work Yet
-  let weeksForMonths = 2
-  let Months = [['abril', 2], ['mayo', 4], ['Junio', 4]]
 
+  let dayOfWork = [
+  ['lunes', 1, {
+    hours: [[8000, 9000], [9015,1000]]
+  }],
+  ['martes', 1, {
+    hours: [[8000, 9000]]
+  }],
+  ['miercoles', 1, {
+    hours: [[8000, 9000]]
+  }],
+  ['jueves', 1, {
+    hours: [[8000, 9000]]
+  }],
+  ['viernes', 1, {
+    hours: [[8000, 9000]]
+  }]
+]
+
+
+  let Months = [['abril', 2], ['mayo', 4]] // , ['mayo', 4], ['Junio', 4]
 
   let hoursAvailibeFromDoctor = []
 
-  
-  class DistributedHours {
-    public functDistributedHours() {
-      
-    }
-  }
-
-
+  let Hours = []
   for (let m = 0; m < Months.length; m++) {
     const MonthsCurrently = Months[m]
-    console.log('MonthsCurrently', MonthsCurrently[1])
-    for (let w = 0; w < MonthsCurrently[1]; w++) {
-      console.log('w', w, MonthsCurrently)  //Week For Month
-      for (let i = 0; i < dayOfWork.length; i++) {
-        const element = dayOfWork[i];
-        const Item = {
-          Months: MonthsCurrently[0],
-          week: w + 1,
-          Day: element[0],
-          Hours: element[1],
-          nameDoctor: nameDoctor,
-          specialty: specialty,
-          status: false
+    for (let w = 0; w <= MonthsCurrently[1]; w++) {
+
+      for (let d = 0; d < dayOfWork.length; d++) {
+        const element = dayOfWork[d];
+
+        for (let h = 0; h < element[2].hours.length; h++) {
+
+          const HoursForDays = element[2].hours
+
+          const Item = {
+            Months: MonthsCurrently[0],
+            week: w + 1,
+            Day: element[0],
+            Hours: DistributedHours(...HoursForDays),
+            nameDoctor: nameDoctor,
+            specialty: specialty,
+            status: false
+          }
+
+          hoursAvailibeFromDoctor.push(Item)
+
         }
 
-      hoursAvailibeFromDoctor.push(Item)
+        
+      }
+
+    }
+  }
+    console.log(hoursAvailibeFromDoctor)
+    console.log('hoursAvailibeFromDoctor', hoursAvailibeFromDoctor.filter(e => e.Day.toLowerCase() === filterDay.toLowerCase()))
+
+
+    function DistributedHours (...Hours) {
+
+      let HoursArr = []
+
+      for (let index = 0; index < Hours.length; index++) {
+        const element = Hours[index];
+
+        const Item = {
+          hourStart: element[0],
+          hoursFinish: element[1]
+        }
+
+        HoursArr.push(Item)
 
       }
 
-
+      return HoursArr
     }
-
-    console.log('hoursAvailibeFromDoctor', hoursAvailibeFromDoctor)
-
     //   const avalibleHours = [
     //     { hourAvailible: '8:00 - 9:00', hourFirst: 800, HourFinish: 900, avalibeStatus: true, Doctor: 'Bastian Ahumada' },
     //     { hourAvailible: '10:00 - 11:00', hourFirst: 1000, HourFinish: 1100, avalibeStatus: true, Doctor: 'Bastian Ahumada' },
@@ -92,4 +127,4 @@ export default (event, context) => {
     //   return HoursByDoctor
     // }
   }
-}
+
